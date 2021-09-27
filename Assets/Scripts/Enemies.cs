@@ -40,6 +40,8 @@ public class Enemies : MonoBehaviour
             gameManager.AfterFight(gameObject.GetComponent<Enemies>(), controller);
         }
 
+        //UpdateText();
+
         if (istimerOn)
         {
             time += Time.deltaTime;
@@ -112,7 +114,7 @@ public class Enemies : MonoBehaviour
         }
 
         StartTimer();
-        if (time >= 5)
+        if (time >= 3)
         {
             for (int i = 0; i < childs.Length; i++)
             {

@@ -10,6 +10,8 @@ TagManager:
   - Enemy
   - Game Manager
   - Platform
+  - Level Complete
+  - Game Over
   layers:
   - Default
   - TransparentFX

@@ -21,14 +21,14 @@ public class Enemy : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
         if (Manager.isPlaying)
         {
             transform.localEulerAngles = Vector3.zero;
             if (isAttacking)
             {
-                rbd.AddForce(Vector3.Normalize(controller.GetCharactersCentroid() - transform.position) * 2.5f, ForceMode.Impulse);
+                rbd.AddForce(Vector3.Normalize(controller.GetComponentsInChildren<Character>()[0].transform.position - transform.position) * 10f, ForceMode.Impulse);
             }
         }
     }

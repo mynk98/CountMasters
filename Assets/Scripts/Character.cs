@@ -18,16 +18,18 @@ public class Character : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
         if (Manager.isPlaying)
         {
             transform.localEulerAngles = Vector3.zero;
             //GetComponent<Rigidbody>().velocity = Vector3.zero;
+            rbd.AddForce(-Vector3.Normalize(transform.localPosition) * 5f, ForceMode.Impulse);
+
             if (needForce)
             {
                 currentTime += Time.deltaTime;
-                rbd.AddForce(-Vector3.Normalize(transform.localPosition) * 2, ForceMode.Impulse);
+                rbd.AddForce(-Vector3.Normalize(transform.localPosition) * 10, ForceMode.Impulse);
                 if (currentTime >= 1.5f)
                 {
                     needForce = false;
@@ -37,7 +39,7 @@ public class Character : MonoBehaviour
 
             if (isAttacking)
             {
-                rbd.AddForce(Vector3.Normalize(enemies - transform.position)*2, ForceMode.Impulse);
+                rbd.AddForce(Vector3.Normalize(enemies - transform.position)*5, ForceMode.Impulse);
             }
         }
 

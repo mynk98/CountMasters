@@ -9,11 +9,15 @@ public class Manager : MonoBehaviour
     public int enemies;
     [SerializeField] Platform platform;
     public static bool isPlaying = true;
+    [SerializeField]GameObject gameOver;
+    public static int score=0;
+    [SerializeField] TMP_Text scoreText;
 
     // Start is called before the first frame update
     void Start()
     {
         platform = GameObject.FindGameObjectWithTag("Platform").GetComponent<Platform>();
+        //gameOver = GameObject.FindGameObjectWithTag("Game Over");
     }
 
     public void AfterFight(Enemies enemy, Controller controller)
@@ -28,7 +32,7 @@ public class Manager : MonoBehaviour
         else
         {
             controller.Multiply(characters - enemies, true);
-            print(characters - enemies);
+            //print(characters - enemies);
             //controller.UpdateChilds();
             controller.isAttacking = false;
             controller.AddForce();
@@ -41,7 +45,8 @@ public class Manager : MonoBehaviour
 
     public void GameOver()
     {
-        print("GameOver");
+        gameOver.SetActive(true);
+        scoreText.text = "Score: " + score;
         isPlaying = false;
         Time.timeScale = 0;
 

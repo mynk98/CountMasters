@@ -82,6 +82,8 @@ public class Controller : MonoBehaviour
             isMoving = false;
         }
 
+        //UpdateChilds();
+
     }
 
 
@@ -175,22 +177,5 @@ public class Controller : MonoBehaviour
         }
     }
 
-    public Vector3 GetCharactersCentroid()
-    {
-        float x=0, y=0, z=0;
-        for(int i = 0; i < childs.Length; i++)
-        {
-            x += childs[i].transform.position.x;
-            y += childs[i].transform.position.y;
-            z += childs[i].transform.position.z;
-        }
-        x /= childs.Length;
-        y /= childs.Length;
-        z /= childs.Length;
-
-        return new Vector3(x, y, z);
-
-
-    }
-   
+    
 }
