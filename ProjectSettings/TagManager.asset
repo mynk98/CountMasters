@@ -3,7 +3,13 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - Character
+  - Enemies
+  - Characters
+  - Enemy
+  - Game Manager
+  - Platform
   layers:
   - Default
   - TransparentFX

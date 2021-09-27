@@ -7,7 +7,8 @@ public class Character : MonoBehaviour
     Rigidbody rbd;
     bool needForce;
     float currentTime=0;
-    int c = 0;
+    bool isAttacking = false;
+    Vector3 enemies;
 
     // Start is called before the first frame update
     void Start()
@@ -19,18 +20,28 @@ public class Character : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        transform.localEulerAngles = Vector3.zero;
-        //GetComponent<Rigidbody>().velocity = Vector3.zero;
-        if (needForce)
+        if (Manager.isPlaying)
         {
-            currentTime += Time.deltaTime;
-            rbd.AddForce(-Vector3.Normalize(transform.localPosition)*2, ForceMode.Impulse);
-            if (currentTime >= 1.5f)
+            transform.localEulerAngles = Vector3.zero;
+            //GetComponent<Rigidbody>().velocity = Vector3.zero;
+            if (needForce)
             {
-                needForce = false;
-                currentTime = 0;
+                currentTime += Time.deltaTime;
+                rbd.AddForce(-Vector3.Normalize(transform.localPosition) * 2, ForceMode.Impulse);
+                if (currentTime >= 1.5f)
+                {
+                    needForce = false;
+                    currentTime = 0;
+                }
+            }
+
+            if (isAttacking)
+            {
+                rbd.AddForce(Vector3.Normalize(enemies - transform.position)*2, ForceMode.Impulse);
             }
         }
+
+        
     }
 
 
@@ -39,14 +50,18 @@ public class Character : MonoBehaviour
         needForce = true;
     }
 
-    /*private void OnCollisionEnter(Collision collision)
+    public void Attack(Vector3 enmy)
     {
-        needForce = false;
+        isAttacking = true;
+        enemies = enmy;
     }
 
-    private void OnCollisionExit(Collision collision)
+    public void StopAttacking()
     {
-        needForce = true;
-    }*/
+        isAttacking = false;
+    }
+
+    
+    
 
 }

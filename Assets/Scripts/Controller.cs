@@ -2,10 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class Controller : MonoBehaviour
 {
-    Touch touch;
     [SerializeField] Text text;
     [SerializeField] GameObject character;
     [SerializeField] int spawnNumber;
@@ -13,35 +13,46 @@ public class Controller : MonoBehaviour
     float maxX=1;
     float minX=-1;
     float radius;
-    Transform[] childs;
+    Character[] childs;
     float pressedX;
     public int noChilds;
-
+    [SerializeField]Transform mainCamera;
+    [SerializeField]TMP_Text childsNoText;
+    public bool isAttacking = false;
+    public Enemies enemies;
+    Manager manager;
+    [SerializeField] bool d;
     // Start is called before the first frame update
     void Start()
     {
-
+        UpdateChilds();
+        manager = GameObject.FindGameObjectWithTag("Game Manager").GetComponent<Manager>();
     }
 
     // Update is called once per frame
     void Update()
     {
+        childs = GetComponentsInChildren<Character>();
+        noChilds = childs.Length;
+        if (noChilds == 0)
+        {
+            manager.AfterFight(enemies, gameObject.GetComponent<Controller>());
+        }
 
-        
         if (Input.GetMouseButtonDown(0))
         {
             pressedX = Input.mousePosition.x;
             isMoving = true;
             
 
-            //Multiply(spawnNumber);
+           //Multiply(spawnNumber,d);
+            
         }
 
-        if (Input.GetMouseButton(0) && isMoving)
+        if (Input.GetMouseButton(0) && isMoving && !isAttacking)
         {
 
-            text.text = (Input.mousePosition.x).ToString() + " " + pressedX;
-            childs = GetComponentsInChildren<Transform>();
+            childs = GetComponentsInChildren<Character>();
             radius = Mathf.Pow(childs.Length, 0.5f);
             maxX = 1 - radius*0.04f;
             minX = -1 + radius*0.04f;
@@ -64,38 +75,122 @@ public class Controller : MonoBehaviour
                 transform.position = new Vector3(minX, 0, transform.position.z);
             }
 
-
-            //float t= Input.mousePosition.x/ Screen.width;
-            //transform.position = new Vector3( Mathf.Lerp(minX,maxX,t), 0, transform.position.z);
-            
-            
+            mainCamera.position = new Vector3(transform.position.x / 5, mainCamera.position.y, mainCamera.position.z);
         }
         else
         {
             isMoving = false;
         }
+
     }
 
 
-    public void Multiply(int size)
+    public void Multiply(int size,bool addDiff=false)
     {
-        radius = Mathf.Pow(spawnNumber,0.5f);
-        //int c = 0;
-        childs = GetComponentsInChildren<Transform>();
+        radius = Mathf.Pow(size,0.5f);
+        childs = GetComponentsInChildren<Character>();
 
-        for (int i = 1; i < childs.Length; i++)
+        if (!addDiff)
         {
-            Destroy(childs[i].gameObject);
+            for (int i = 0; i < childs.Length; i++)
+            {
+                Destroy(childs[i].gameObject);
+            }
+
+            for (int i = 0; i < size; i++)
+            {
+                float z = Random.Range(-radius / 2, radius / 2);
+                float x = Random.Range(-radius / 2, radius / 2);
+                GameObject newCharacter = Instantiate<GameObject>(character, gameObject.transform);
+                newCharacter.transform.localScale = Vector3.one;
+                newCharacter.transform.localPosition = new Vector3(x, 0, z);
+            }
+        }
+        else
+        {
+            for (int i = 0; i < childs.Length-size; i++)
+            {
+                Destroy(childs[i].gameObject);
+            }
+
+            for (int i = 0; i < size-childs.Length; i++)
+            {
+                float z = Random.Range(-radius / 2, radius / 2);
+                float x = Random.Range(-radius / 2, radius / 2);
+                GameObject newCharacter = Instantiate<GameObject>(character, gameObject.transform);
+                newCharacter.transform.localScale = Vector3.one;
+                newCharacter.transform.localPosition = new Vector3(x, 0, z);
+
+            }
+
+            for (int i = 0; i < childs.Length; i++)
+            {
+                childs[i].AddForce();
+            }
+
         }
 
-        for (int i = 0; i < size; i++)
+        
+        childsNoText.text = size.ToString();
+    }
+
+    public void Attack(Vector3 enmy)
+    {
+        childs = GetComponentsInChildren<Character>();
+        for (int i = 0; i < childs.Length; i++)
         {
-            float z = Random.Range(-radius/2, radius/2);
-            float x = Random.Range(-radius / 2, radius / 2);
-            GameObject newCharacter= Instantiate<GameObject>(character, gameObject.transform);
-            newCharacter.transform.localScale = Vector3.one;
-            newCharacter.transform.localPosition = new Vector3(x,0,z);
-            
+            childs[i].Attack(enmy);
+        }
+        isAttacking = true;
+    }
+
+    public void StopAttack()
+    {
+        childs = GetComponentsInChildren<Character>();
+        for (int i = 0; i < childs.Length; i++)
+        {
+            childs[i].StopAttacking();
+        }
+        isAttacking = false;
+    }
+
+    public void UpdateChilds()
+    {
+        noChilds = GetComponentsInChildren<Character>().Length;
+        childsNoText.text = noChilds.ToString();
+
+    }
+
+    public int GetChildsCount()
+    {
+        return GetComponentsInChildren<Character>().Length;
+    }
+
+    public void AddForce()
+    {
+        childs = GetComponentsInChildren<Character>();
+        for (int i = 0; i < childs.Length; i++)
+        {
+            childs[i].AddForce();
         }
     }
+
+    public Vector3 GetCharactersCentroid()
+    {
+        float x=0, y=0, z=0;
+        for(int i = 0; i < childs.Length; i++)
+        {
+            x += childs[i].transform.position.x;
+            y += childs[i].transform.position.y;
+            z += childs[i].transform.position.z;
+        }
+        x /= childs.Length;
+        y /= childs.Length;
+        z /= childs.Length;
+
+        return new Vector3(x, y, z);
+
+
+    }
+   
 }

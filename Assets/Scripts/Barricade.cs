@@ -32,18 +32,24 @@ public class Barricade : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.tag == "Character")
+        
+        if (other.gameObject.tag == "Character" && !GetComponentInParent<Barricades>().hasCollided)
         {
+            GetComponentInParent<Barricades>().hasCollided = true;
             if (operation == operations.add)
             {
-                multiplier = other.transform.parent.GetComponentsInChildren<Transform>().Length + value - 1;
+                multiplier = other.transform.parent.GetComponentsInChildren<Character>().Length + value;
             }
             else
             {
-                multiplier = (other.transform.parent.GetComponentsInChildren<Transform>().Length - 1) * value;
+                multiplier = (other.transform.parent.GetComponentsInChildren<Character>().Length) * value;
             }
 
-            other.GetComponentInParent<Controller>().Multiply(multiplier);
+            Controller controller = other.GetComponentInParent<Controller>();
+            controller.Multiply(multiplier);
+            
+            
+
         }
     }
 }
